@@ -1,0 +1,9 @@
+<h1>Listado de Heroes</h1>
+<mat-divider></mat-divider>
+<div class="grid mb-8 pt-2">
+  <!-- se hace el ngFor desde el heroes del .ts de la pagina-->
+  <div *ngFor="let hero of heroes" class="col-12 sm:col-4 md:col-3 xl:col-2">
+    <!-- se invoca la propiedad en el componente -->
+    <heroes-hero-card [hero]="hero"></heroes-hero-card>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Publisher } from '../../interfaces/hero.interface';
+import { Hero, Publisher } from '../../interfaces/hero.interface';
+import { HeroesService } from '../../services/heroes.service';
 
 @Component({
   selector: 'app-new-page',
@@ -19,9 +20,26 @@ export class NewPageComponent {
     characters: new FormControl(),
     alt_img: new FormControl(),
   });
-
+  // agregamos contenido para visualizacion de inputs especiales
   public publishers = [
     { id: 'DC Comics', desc: 'DC - Comics' },
     { id: 'Marvel Comics', desc: 'Marvel - Comics' },
   ];
+
+  // injectamos el servicio que va a recibir el formulario
+  constructor(private heroesService: HeroesService) {}
+
+  // tomamos los datos del formulario
+  get currentHero(): Hero {
+    // es necesario agregar as Hero porque algunos campos del formulario
+    // pueden ser null por tanto no se corresponden con la interface Hero
+    const hero = this.heroForm.value as Hero;
+    return hero;
+  }
+
+  // definimos la funcion que controla el formulario
+  onSubmit(): void {
+    // si el formulario es invalido no pasa nada
+    if (this.heroForm.invalid) return;
+  }
 }

@@ -18,9 +18,12 @@ export class HeroPageComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.activatedRoute.params
+      // tomamos el id de la direccion url y se lo pasamos al servicio
       .pipe(switchMap(({ id }) => this.heroesService.getHeroesById(id)))
       .subscribe((hero) => {
+        // si no existe el heroe redireccionamos a la vista lista
         if (!hero) return this.router.navigate(['/heroes/list']);
+        // si existe lo asignamos
         this.hero = hero;
         return;
       });

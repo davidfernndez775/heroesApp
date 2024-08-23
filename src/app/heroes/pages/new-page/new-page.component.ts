@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+
+import { filter, switchMap } from 'rxjs';
+
 import { Hero, Publisher } from '../../interfaces/hero.interface';
 import { HeroesService } from '../../services/heroes.service';
-import { switchMap } from 'rxjs';
+import { ConfirmDialogComponent } from './../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-new-page',
@@ -32,7 +37,9 @@ export class NewPageComponent implements OnInit {
   constructor(
     private heroesService: HeroesService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackbar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   // tomamos los datos del formulario
@@ -54,7 +61,9 @@ export class NewPageComponent implements OnInit {
     // cargar los datos del heroe en el formulario
     this.activatedRoute.params
       .pipe(
-        // el switchMap
+        // el switchMap recibe el id desde el url y crea un nuevo observable
+        // haciendo una peticion al servicio para que le mande los datos
+        // del heroe
         switchMap(({ id }) => this.heroesService.getHeroesById(id))
       )
       .subscribe((hero) => {
@@ -75,7 +84,7 @@ export class NewPageComponent implements OnInit {
     if (this.currentHero.id) {
       // llamamos a la funcion del servicio y nos suscribimos al observable
       this.heroesService.updateHero(this.currentHero).subscribe((hero) => {
-        // todo: mostrar snackbar
+        this.showSnackbar(`${hero.superhero} is updated`);
       });
       return;
     }
@@ -83,7 +92,45 @@ export class NewPageComponent implements OnInit {
     // si no se ejecutan ninguno de los if anteriores significa que tenemos
     // un formulario valido sin un id entre sus datos por tanto se hace un create
     this.heroesService.addHero(this.currentHero).subscribe((hero) => {
-      // todo: mostrar snackbar y redirigir a heroes/edit heroes.id
+      // redireccionamos a la vista de edicion
+      this.router.navigate(['/heroes/edit', hero.id]);
+      this.showSnackbar(`${hero.superhero} created!`);
     });
+  }
+
+  // funcion que controla la ventana de dialogo(popup) para confirmar
+  // la eliminacion
+  onDeleteHero() {
+    // se chequea que exista el id
+    if (!this.currentHero.id) throw Error('Hero id is required');
+
+    // abrimos la ventana de dialogo y se le pasan los datos del heroe
+    // por si son necesarios
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: this.heroForm.value,
+    });
+
+    // una vez que el usuario escoge la opcion se realiza el cerrado de
+    // la ventana y se ejecutan las acciones escogidas
+    dialogRef
+      .afterClosed()
+      .pipe(
+        // se chequea que el resultado sea true
+        filter((result: boolean) => result),
+        // se llama a la funcion de borrado en el servicio
+        switchMap(() => this.heroesService.deleteHero(this.currentHero.id)),
+        // se chequea que el borrado fue exitoso
+        filter((wasDeleted: boolean) => wasDeleted)
+      )
+      .subscribe(() => {
+        // una vez confirmado el borrado
+        this.router.navigate(['/heroes']);
+      });
+  }
+
+  // los snackbar son ventanas pequeñas que informan de procesos, al ser
+  // sencillas no requieren crear un componente para ellas
+  showSnackbar(message: string): void {
+    this.snackbar.open(message, 'done', { duration: 2500 });
   }
 }

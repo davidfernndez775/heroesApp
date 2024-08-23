@@ -54,11 +54,11 @@ export class HeroesService {
   // si el borrado fue exitoso o no
   deleteHero(id: string): Observable<boolean> {
     return this.http.delete(`${this.baseUrl}/heroes/${id}`).pipe(
-      // si hay un error por fallo de conexion o porque el recurso ya fue borrado
-      catchError((err) => of(false)),
       // si no hay error, devuelve el true, sin importar la respuesta del backend
       // porque se asume que la operacion de borrado fue exitosa
-      map((resp) => true)
+      map((resp) => true),
+      // si hay un error por fallo de conexion o porque el recurso ya fue borrado
+      catchError((err) => of(false))
     );
   }
 }

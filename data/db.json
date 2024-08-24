@@ -2,7 +2,7 @@
   "users": [
     {
       "id": 1,
-      "usuario": "John Doe",
+      "user": "John Doe",
       "email": "john.due@gmail.com"
     }
   ],
@@ -13,8 +13,7 @@
       "publisher": "DC Comics",
       "alter_ego": "Bruce Wayne",
       "first_appearance": "Detective Comics #27",
-      "characters": "Bruce Wayne",
-      "alt_img": "https://i.pinimg.com/564x/95/27/4a/95274a2b110c4b13bbb1c0920571bcfb.jpg"
+      "characters": "Bruce Wayne"
     },
     {
       "id": "dc-superman",
@@ -167,15 +166,6 @@
       "alter_ego": "Norrin Radd",
       "first_appearance": "The Fantastic Four #48",
       "characters": "Norrin Radd"
-    },
-    {
-      "id": "wBkGQ_Z",
-      "superhero": "White Python",
-      "publisher": "DC Comics",
-      "alter_ego": "Jake Peralta",
-      "first_appearance": "West Comic #3",
-      "characters": "Jack Danger",
-      "alt_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Sr4TWEbR9KM6IO-j1KN2kI6jrxrWwdZ9Lw&s"
     }
   ]
 }

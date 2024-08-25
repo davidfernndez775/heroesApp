@@ -36,14 +36,18 @@ export class AuthService {
     );
   }
 
-  // funcion para chequear el estado de autenticacion
-  checkAuthentication(): Observable<boolean> | boolean {
+  // funcion para chequear el estado de autenticacion, como establece si
+  // hay un usuario y lo busca puede ser llamado desde varios lugares
+  checkAuthentication(): Observable<boolean> {
     // si no hay un token guardado en el localStorage, no esta autenticado
     if (!localStorage.getItem('token')) return of(false);
     // si hay un token
     const token = localStorage.getItem('token');
     return this.http.get<User>(`${this.baseUrl}/users/1`).pipe(
       tap((user) => (this.user = user)),
+      // la doble negacion (!!) se usa porque tenemos que devolver un valor booleano
+      // pero user es un objeto de tipo User, cuando usamos !user al existir el usuario
+      // devuelve un false, cuando usamos la doble negacion convierte el false en true
       map((user) => !!user),
       catchError((err) => of(false))
     );
